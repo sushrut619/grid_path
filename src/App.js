@@ -1,23 +1,20 @@
-import logo from './logo.svg';
+import { useState } from 'react';
+
 import './App.css';
+import GridRow from './components/GridRow';
+import InputTypeSelect from './components/InputTypeSelect';
+
+const initialGrid = Array(10).fill(Array(10).fill(0))
 
 function App() {
+  console.debug("app js...");
+  const [grid, setGrid] = useState(initialGrid);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div style={{ flexDirection: "row", display: "flex", maxWidth: 264, flexWrap: "wrap" }}>
+        {grid.map((item, index) => <GridRow key={index} row={item} rowNum={index} />)}
+      </div>
+      <InputTypeSelect />
     </div>
   );
 }
