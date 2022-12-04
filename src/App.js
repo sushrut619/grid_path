@@ -1,20 +1,90 @@
-import { useState } from 'react';
+import { useCallback, useState } from "react";
+import _ from "lodash";
 
-import './App.css';
-import GridRow from './components/GridRow';
-import InputTypeSelect from './components/InputTypeSelect';
+import "./App.css";
+import GridRow from "./components/GridRow";
+import InputTypeSelect from "./components/InputTypeSelect";
+import { initialGrid, inputTypes } from "./constants";
 
-const initialGrid = Array(10).fill(Array(10).fill(0))
+function calcPath(grid, origin, destination) {
+
+}
 
 function App() {
   console.debug("app js...");
   const [grid, setGrid] = useState(initialGrid);
+  const [inputType, setInputType] = useState(inputTypes.obstacle);
+  const [origin, setOrigin] = useState([-1, -1]);
+  const [destination, setDestination] = useState([-1, -1]);
+
+  const onChangeInputType = useCallback(
+    (event) => {
+      setInputType(event.target.value);
+    },
+    [setInputType],
+  );
+
+  const onClickCell = useCallback((row, col) => {
+    let cellValue = 1;
+    let prevRow = -1, prevCol = -1;
+    console.debug("row: ", row, " col: ", col, " inputType: ", inputType);
+    if (inputType === inputTypes.origin) {
+      cellValue = 2;
+      prevRow = origin[0];
+      prevCol = origin[1];
+      setOrigin([row, col]);
+    }
+    else if (inputType === inputTypes.destination) {
+      cellValue = 3;
+      prevRow = destination[0];
+      prevCol = destination[1];
+      setDestination([row, col]);
+    } else if (grid[row][col] === 1) {
+      cellValue = 0;
+    }
+    let newGrid = _.cloneDeep(grid);
+    newGrid[row][col] = cellValue;
+    if (prevRow !== -1 && prevCol !== -1 && (prevRow !== row || prevCol !== col)) {
+      newGrid[prevRow][prevCol] = 0;
+    }
+    setGrid(newGrid);
+  }, [origin, destination, grid, inputType, setOrigin, setGrid, setDestination]);
+
+  console.log("origin: ", origin, " dest: ", destination);
+
   return (
     <div className="App">
-      <div style={{ flexDirection: "row", display: "flex", maxWidth: 264, flexWrap: "wrap" }}>
-        {grid.map((item, index) => <GridRow key={index} row={item} rowNum={index} />)}
+      <div
+        style={{
+          flexDirection: "row",
+          display: "flex",
+          maxWidth: 264,
+          flexWrap: "wrap",
+        }}
+      >
+        {grid.map((item, index) => (
+          <GridRow
+            grid={grid}
+            inputType={inputType}
+            key={index}
+            onClickCell={onClickCell}
+            row={item}
+            rowNum={index}
+            setGrid={setGrid}
+          />
+        ))}
       </div>
-      <InputTypeSelect />
+      <div>
+        <InputTypeSelect
+          onChangeInputType={onChangeInputType}
+          selectedType={inputType}
+        />
+        <button
+          style={{ marginTop: 20 }}
+          onClick={() => {
+            const path = calcPath(grid, origin, destination);
+          }}>Find Path</button>
+      </div>
     </div>
   );
 }
