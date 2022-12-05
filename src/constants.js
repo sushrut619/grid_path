@@ -17,4 +17,4 @@ for (let i = 0; i < maxRows; ++i) {
     initialGrid.push(Array.from(gridRow));
 }
 
-export { initialGrid, inputTypes };
+export { initialGrid, inputTypes, maxRows, maxColumns };

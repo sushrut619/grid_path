@@ -8,11 +8,15 @@ function getCellColor(cellValue) {
             break;
         }
         case 2: {
-            cellColor = colors.blue;
+            cellColor = colors.green;
             break;
         }
         case 3: {
-            cellColor = colors.green;
+            cellColor = colors.red;
+            break;
+        }
+        case 4: {
+            cellColor = colors.blue;
             break;
         }
         default: {
