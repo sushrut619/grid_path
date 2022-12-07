@@ -134,13 +134,15 @@ function findPath2(grid, origin, destination) {
 }
 
 function getNeighbours(node, grid) {
+    console.debug("node: ", node, " grid: ", grid);
     let neighbours = [];
     const deltaRow = [1, -1, 0, 0];
     const deltaColumn = [0, 0, 1, -1];
 
     for (let i = 0; i < 4; ++i) {
-        const nextRow = node[0] + deltaRow;
-        const nextColumn = node[1] + deltaColumn;
+        const nextRow = node[0] + deltaRow[i];
+        const nextColumn = node[1] + deltaColumn[i];
+        console.debug("next row: ", nextRow, " nextColumn: ", nextColumn);
 
         if (nextRow < 0 || nextRow >= maxRows || nextColumn < 0 || nextColumn >= maxColumns) {
             continue;
