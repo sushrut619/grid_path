@@ -4,8 +4,8 @@ import _ from "lodash";
 import "./App.css";
 import GridRow from "./components/GridRow";
 import InputTypeSelect from "./components/InputTypeSelect";
-import { inputTypes, maxRows, maxColumns } from "./constants";
-import { build2DArray, findPath, findPath2 } from "./utils";
+import { inputTypes, maxRows, maxColumns, pathErrorMsg } from "./constants";
+import { build2DArray, findPath } from "./utils";
 
 const initialGrid = build2DArray(maxRows, maxColumns);
 
@@ -15,6 +15,7 @@ function App() {
   const [inputType, setInputType] = useState(inputTypes.obstacle);
   const [origin, setOrigin] = useState([-1, -1]);
   const [destination, setDestination] = useState([-1, -1]);
+  const [pathError, setPathError] = useState("");
 
   const onChangeInputType = useCallback(
     (event) => {
@@ -24,10 +25,12 @@ function App() {
   );
 
   const drawPath = useCallback(() => {
-    const memo = build2DArray(maxRows, maxColumns, -1);
     const gridCopy = _.cloneDeep(grid);
-    const shortestPath = findPath2(gridCopy, origin, destination);
+    const shortestPath = findPath(gridCopy, origin, destination);
     console.debug("path: ", shortestPath);
+    if (shortestPath === -1) {
+      setPathError(pathErrorMsg);
+    }
     const newGrid = _.cloneDeep(grid);
 
     for (let i = 0; i < shortestPath.length; ++i) {
@@ -73,11 +76,12 @@ function App() {
         newGrid[prevRow][prevCol] = 0;
       }
       setGrid(newGrid);
+      setPathError("");
     },
-    [destination, grid, inputType, origin, setDestination, setGrid, setOrigin]
+    [destination, grid, inputType, origin, setDestination, setGrid, setOrigin, setPathError],
   );
 
-  console.log("origin: ", origin, " dest: ", destination);
+  const resetGrid = useCallback(() => setGrid(initialGrid), [setGrid]);
 
   return (
     <div className="App">
@@ -87,6 +91,7 @@ function App() {
           display: "flex",
           maxWidth: 264,
           flexWrap: "wrap",
+          marginTop: 40,
         }}
       >
         {grid.map((item, index) => (
@@ -106,9 +111,13 @@ function App() {
           onChangeInputType={onChangeInputType}
           selectedType={inputType}
         />
-        <button style={{ marginTop: 20 }} onClick={() => drawPath()}>
+        <button style={{ margin: 20 }} onClick={() => drawPath()}>
           Find Path
         </button>
+        <button style={{ margin: 20 }} onClick={resetGrid}>
+          Reset Grid
+        </button>
+        <p style={{ color: "red" }}>{pathError}</p>
       </div>
     </div>
   );

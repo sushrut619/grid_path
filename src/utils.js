@@ -16,75 +16,7 @@ function build2DArray(numRows, numCols, cellValue = 0) {
     return grid;
 }
 
-function findPath(grid, origin, destination, memo) {
-    let shortestPath = -1;
-    let possiblePaths = [];
-    const destRow = destination[0], destColumn = destination[1];
-    if (destRow < 0 || destRow >= maxRows || destColumn < 0 || destColumn >= maxColumns) {
-        return shortestPath;
-    }
-
-    if (grid[destRow][destColumn] === 1) {
-        return shortestPath;
-    }
-
-    if (memo[destRow][destColumn] !== -1) {
-        return memo[destRow][destColumn]
-    }
-
-    if (grid[destRow][destColumn] === 5) {
-        return shortestPath;
-    }
-
-    if (origin[0] === destRow && origin[1] === destColumn) {
-        shortestPath = [];
-        shortestPath.push(Array.from(origin));
-        memo[destRow][destColumn] = _.cloneDeep(shortestPath);
-        return shortestPath;
-    }
-
-    // mark the cell as visited
-    grid[destRow][destColumn] = 5;
-
-    // we start from destination and move towards origin
-    for (let i = -1; i <= 1; ++i) {
-        for (let j = -1; j <= 1; ++j) {
-            if (i === 0 && j === 0) {
-                continue;
-            }
-            // we cannot travel diagonally
-            if (i !== 0 && j !== 0) {
-                continue;
-            }
-
-            const newDest = [destRow + i, destColumn + j];
-            console.debug("original dest: ", destination, " new destination: ", newDest);
-            const newPath = findPath(grid, origin, newDest, memo);
-            if (newPath !== -1) {
-                possiblePaths.push(newPath);
-                // console.debug("new path: ", newPath);
-            }
-        }
-    }
-
-    console.debug("possible path lenghts: ", possiblePaths.length);
-    for (let i = 0; i < possiblePaths.length; ++i) {
-        if (shortestPath === -1 || possiblePaths[i].length < shortestPath.length) {
-            console.debug("shortest path before: ", shortestPath, " possible path: ", possiblePaths[i].length);
-            shortestPath = possiblePaths[i];
-            console.debug("shortest path after: ", shortestPath.length);
-        }
-    }
-
-    shortestPath = _.cloneDeep(shortestPath);
-    if (shortestPath !== -1) {
-        shortestPath.push(Array.from(destination));
-    }
-    memo[destRow][destColumn] = _.cloneDeep(shortestPath);
-    return shortestPath;
-}
-
-function findPath2(grid, origin, destination) {
+function findPath(grid, origin, destination) {
     const visitedNodes = _.cloneDeep(grid);
     let shortestPath = -1;
     const memo = build2DArray(maxRows, maxColumns, -1);
@@ -158,4 +90,4 @@ function getNeighbours(node, grid) {
     return neighbours;
 }
 
-export { build2DArray, findPath, findPath2 };
+export { build2DArray, findPath };

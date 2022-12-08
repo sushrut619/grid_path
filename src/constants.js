@@ -14,4 +14,6 @@ const maxColumns = 10;
 //     destination: 2
 // }
 
-export { inputTypes, maxRows, maxColumns };
+const pathErrorMsg = "Unable to find a path";
+
+export { inputTypes, maxRows, maxColumns, pathErrorMsg };
